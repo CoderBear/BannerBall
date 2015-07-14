@@ -14,6 +14,17 @@ public:
 
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
+    
+    cocos2d::Sprite *ball;
+    
+    bool onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event);
+    void onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event);
+    void onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event);
+    
+private:
+    cocos2d::PhysicsWorld *gameWorld;
+    void SetPhysicsWorld(cocos2d::PhysicsWorld *world) {gameWorld = world;}
+    bool onContactBegin(cocos2d::PhysicsContact &contact);
 };
 
 #endif // __HELLOWORLD_SCENE_H__
