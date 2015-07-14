@@ -2,6 +2,9 @@
 #define __HELLOWORLD_SCENE_H__
 
 #include "cocos2d.h"
+#include "ui/CocosGUI.h"
+
+USING_NS_CC;
 
 class HelloWorld : public cocos2d::Layer
 {
@@ -17,14 +20,11 @@ public:
     
     cocos2d::Sprite *ball;
     
-    bool onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event);
-    void onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event);
-    void onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event);
+    void touchEvent( Ref *sender, ui::Widget::TouchEventType type);
     
 private:
     cocos2d::PhysicsWorld *gameWorld;
     void SetPhysicsWorld(cocos2d::PhysicsWorld *world) {gameWorld = world;}
-    bool onContactBegin(cocos2d::PhysicsContact &contact);
 };
 
 #endif // __HELLOWORLD_SCENE_H__

@@ -1,8 +1,10 @@
 #include "HelloWorldScene.h"
+#include "SonarFrameworks.h"
 #include "cocostudio/CocoStudio.h"
 #include "ui/CocosGUI.h"
 
 USING_NS_CC;
+using namespace ui;
 
 using namespace cocostudio::timeline;
 
@@ -49,42 +51,43 @@ bool HelloWorld::init()
     
     this->addChild(edgeNode);
     
-    // Our bouncing ball
-    ball = Sprite::create("redball.png");
-    ball->setPosition((visibleSize.width/2) + origin.x, (visibleSize.height/2)+origin.y);
+    // Our Ball Button
+    Button *ballButton = Button::create("redball.png","redball.png");
+    ballButton->setPosition(Vec2((visibleSize.width/2) + origin.x, (visibleSize.height/2)+origin.y));
     
-    auto ballBody = PhysicsBody::createCircle(ball->getContentSize().width/2, PhysicsMaterial(0,1,0));
-    ballBody->setAngularVelocity(200);
-    ballBody->setVelocity(Vec2(100, 247));
+    auto ballBody = PhysicsBody::createCircle(ballButton->getContentSize().width/2, PhysicsMaterial(0,1,0));
+    ballBody->setVelocity(Vec2(256, 256));
 //    ballBody->setVelocityLimit(300);
-    
     ballBody->setCategoryBitmask(1);
     ballBody->setContactTestBitmask(true);
-    ball->setPhysicsBody(ballBody);
     
-    this->addChild(ball);
+    ballButton->setPhysicsBody(ballBody);
+    this->addChild(ballButton);
+    ballButton->addTouchEventListener(CC_CALLBACK_2(HelloWorld::touchEvent, this));
     
-    auto touchListener = EventListenerTouchOneByOne::create();
-    touchListener->setSwallowTouches(true);
-    
-    touchListener->onTouchBegan=CC_CALLBACK_2(HelloWorld::onTouchBegan,this);
-    touchListener->onTouchMoved=CC_CALLBACK_2(HelloWorld::onTouchMoved,this);
-    touchListener->onTouchEnded=CC_CALLBACK_2(HelloWorld::onTouchEnded,this);
-    
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
-    return true;
-}
-
-bool HelloWorld::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event){
-    CCLOG("onTouchBegan x = %f, y = %f",touch->getLocation().x,touch->getLocation().y);
+    SonarCocosHelper::IOS::Setup();
+    SonarCocosHelper::Mopub::showBannerAd();
     
     return true;
 }
 
-void HelloWorld::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event){
-    CCLOG("onTouchedMoved x = %f, y = %f",touch->getLocation().x,touch->getLocation().y);
-}
+void HelloWorld::touchEvent( Ref *sender, ui::Widget::TouchEventType type){
+    switch (type) {
+        case Widget::TouchEventType::BEGAN:
+            log("Touch began");
+            SonarCocosHelper::Mopub::refreshAd();
+            break;
+        case Widget::TouchEventType::MOVED:
+            log("Touch moved");
+            break;
+        case Widget::TouchEventType::ENDED:
+            log("Touch ended");
+            break;
+        case Widget::TouchEventType::CANCELED:
+            log("Touch cancelled");
+            break;
 
-void HelloWorld::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event){
-    CCLOG("onTouchedEnded x = %f, y = %f",touch->getLocation().x,touch->getLocation().y);
+        default:
+            break;
+    }
 }
